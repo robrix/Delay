@@ -6,50 +6,43 @@ func delay<Delayed>(value: @auto_closure () -> Delayed) -> Delay<Delayed> {
 }
 
 /// A lazily-evaluated value, convertible to its underlying type.
-enum Delay<Delayed> {
-	case Forced(Delayed)
-	case Lazy(() -> Delayed)
+@final class Delay<Delayed> {
+	/// The underlying value. Lazily evaluates and produces the receiving type.
+	@lazy var value: Delayed = {
+		let value = self._thunk!()
+		self._thunk = nil
+		return value
+	}()
 	
 	init(_ thunk: () -> Delayed) {
-		self = .Lazy(thunk)
+		_thunk = thunk
 	}
-	
-	/// Force the delay, evaluating the thunk if unevaluated.
-	mutating func force() -> Delayed {
-		switch self {
-		case let .Forced(x):
-			return x
-		case let .Lazy(thunk):
-			let value = thunk()
-			self = .Forced(value)
-			return value
-		}
-	}
-	
 	
 	/// Conversion to the underlying type.
-	@conversion mutating func __conversion() -> Delayed {
-		return force()
+	@conversion func __conversion() -> Delayed {
+		return value
 	}
+	
+	var _thunk: (() -> Delayed)?
 }
 
 
 /// Equality between Delays of Equatable. Forces the Delay.
-func == <Delayed : Equatable> (inout left: Delay<Delayed>, inout right: Delay<Delayed>) -> Bool {
-	return (left.force() == right.force())
+func == <Delayed : Equatable> (left: Delay<Delayed>, right: Delay<Delayed>) -> Bool {
+	return ((left as Delayed) == (right as Delayed))
 }
 
 /// Equality between Delays of Equatable and underlying type. Forces the Delay.
-func == <Delayed : Equatable> (inout left: Delay<Delayed>, right: Delayed) -> Bool {
-	return left.force() == right
+func == <Delayed : Equatable> (left: Delay<Delayed>, right: Delayed) -> Bool {
+	return (left as Delayed) == right
 }
 
-func == <Delayed : Equatable> (left: Delayed, inout right: Delay<Delayed>) -> Bool {
-	return left == right.force()
+func == <Delayed : Equatable> (left: Delayed, right: Delay<Delayed>) -> Bool {
+	return left == (right as Delayed)
 }
 
 
 /// Hashing for Delays of Hashable. Forces the Delay.
-func hashValue<Delayed : Hashable>(inout delay: Delay<Delayed>) -> Int {
-	return delay.force().hashValue
+func hashValue<Delayed : Hashable>(delay: Delay<Delayed>) -> Int {
+	return (delay as Delayed).hashValue
 }
