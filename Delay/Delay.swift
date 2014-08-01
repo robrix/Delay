@@ -6,9 +6,9 @@ func delay<Delayed>(value: @auto_closure () -> Delayed) -> Delay<Delayed> {
 }
 
 /// A lazily-evaluated value, convertible to its underlying type.
-@final class Delay<Delayed> {
+final class Delay<Delayed> {
 	/// The underlying value. Lazily evaluates and produces the receiving type.
-	@lazy var value: Delayed = {
+	lazy var value: Delayed = {
 		let value = self._thunk!()
 		self._thunk = nil
 		return value
@@ -19,7 +19,7 @@ func delay<Delayed>(value: @auto_closure () -> Delayed) -> Delay<Delayed> {
 	}
 	
 	/// Conversion to the underlying type.
-	@conversion func __conversion() -> Delayed {
+	func __conversion() -> Delayed {
 		return value
 	}
 	
