@@ -13,8 +13,8 @@ It’s a bit like a promise.
 
 ```swift
 func expensiveComputation() -> Int
-let delayedResult = delay(expensiveComputation())
-let actualResult = delay.force() // explicitly force it
+let delayedResult = delay(expensiveComputation)
+let actualResult = delay.value // explicitly force it
 let otherActualResult: Int = delay // use the implicit __conversion
 ```
 
