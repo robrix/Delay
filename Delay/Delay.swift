@@ -5,6 +5,11 @@ public func delay<Delayed>(value: @auto_closure () -> Delayed) -> Delay<Delayed>
 	return Delay(value)
 }
 
+/// Takes an unevaluated closure \c value and returns a lazily-evaluating wrapper for it.
+public func delay<Delayed>(value: () -> Delayed) -> Delay<Delayed> {
+	return Delay(value)
+}
+
 /// A lazily-evaluated value, convertible to its underlying type.
 public final class Delay<Delayed: Reflectable> {
 	/// The underlying value. Lazily evaluates and produces the receiving type.
