@@ -1,3 +1,8 @@
+# Deprecated
+
+This project is deprecated, and will not be updated in future. [Memo](https://github.com/robrix/Memo) is a complete replacement for its functionality, and is better-tested, -documented, and -spoken.
+
+
 # Delay
 
 This is a Swift microframework which implements a lazily-evaluated memoizing wrapper type.
